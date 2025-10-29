@@ -1,11 +1,11 @@
-const CACHE_NAME = 'gyeongpyeong-headline-generator-v5';
+const CACHE_NAME = 'gyeongpyeong-headline-generator-v7';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/manifest.webmanifest',
-  '/apple-touch-icon.png',
-  '/icon-192x192.png',
-  '/icon-512x512.png'
+  '/manifest.json',
+  '/apple-touch-icon.svg',
+  '/icon-192x192.svg',
+  '/icon-512x512.svg'
 ];
 
 self.addEventListener('install', (event) => {

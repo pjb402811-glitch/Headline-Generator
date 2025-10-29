@@ -1,5 +1,5 @@
 {
   "name": "경영평가 아이템 제목 생성기",
-  "description": "An application that generates 36 creative and persuasive headlines across 12 different types for public institution management evaluation reports, based on user-provided core performance data. It aims to enhance report impact and streamline the writing process.",
+  "description": "사용자가 입력한 핵심 성과 데이터를 기반으로, 공공기관 경영평가 보고서에 사용할 12가지 유형의 창의적이고 설득력 있는 헤드라인 36개를 생성하는 애플리케이션입니다.",
   "requestFramePermissions": []
 }
