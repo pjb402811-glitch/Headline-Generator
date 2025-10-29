@@ -1,11 +1,21 @@
-<div align="center">
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+# 경평제목생성기
 
-  <h1>Built with AI Studio</h2>
+공공기관 경영평가 보고서의 제목 생성을 돕는 AI 기반 웹 애플리케이션입니다. 사용자가 핵심 성과 데이터를 입력하면, 15가지 다양한 유형의 설득력 있는 제목 45개를 생성하여 보고서의 완성도를 높여줍니다.
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## 주요 기능
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+-   **AI 기반 제목 생성**: Gemini API를 활용하여 창의적이고 전략적인 제목을 생성합니다.
+-   **다양한 유형 제공**: 명사형, 동사형, 슬로건형 등 15가지 유형의 제목을 제공하여 활용도를 높입니다.
+-   **문서 첨부 기능**: 최신 정책 자료나 보고서(.pdf, .docx, .txt 등)를 첨부하여 AI가 내용을 참고하게 할 수 있습니다.
+-   **사용자 친화적 인터페이스**: 직관적인 입력 폼을 통해 누구나 쉽게 사용할 수 있습니다.
 
-</div>
+## 기술 스택
+
+-   **Frontend**: React, TypeScript, Tailwind CSS
+-   **Build Tool**: Vite
+-   **AI**: Google Gemini API
+
+## 배포
+
+이 프로젝트는 [Vercel](https://vercel.com/)을 통해 배포할 수 있습니다.

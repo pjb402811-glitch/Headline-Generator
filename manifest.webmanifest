@@ -1,0 +1,23 @@
+{
+  "name": "경평제목생성기",
+  "short_name": "경평제목생성기",
+  "description": "An application that generates creative and persuasive headlines for public institution management evaluation reports.",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#111827"
+}
