@@ -352,8 +352,8 @@ function App() {
         return (
           <>
             <div className="text-center mb-10">
-              <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">보고서 아이템 제목생성을 위해 아래에 정보를 입력해주세요.</h2>
-              <p className="mt-2 text-lg text-lime-400">경평 보고서 쓰시는 분들께 도움이 되길 바라며 -Made by 박정범</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">실적보고서 아이템 제목생성을 위해 아래에 정보를 입력해주세요.</h2>
+              <p className="mt-2 text-lg text-lime-400">경영평가 실적보고서 쓰시는 분들께 도움이 되길 바라며 -Made by 박정범</p>
             </div>
             <div className="bg-gray-800 p-8 rounded-lg shadow-lg border border-gray-700">
               <form onSubmit={handleSubmit} className="space-y-6">

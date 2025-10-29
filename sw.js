@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gyeongpyeong-headline-generator-v7';
+const CACHE_NAME = 'gyeongpyeong-performance-report-headline-generator-v7';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',

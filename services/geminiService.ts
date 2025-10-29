@@ -11,7 +11,7 @@ export async function generateHeadlines(apiKey: string, userInput: UserInput, at
     const ai = new GoogleGenAI({ apiKey });
 
     const textPrompt = `
-    You are a 'Headline Strategist', an expert AI assistant for public institution report writers in South Korea. Your goal is to generate fresh, persuasive, and clear headlines for management evaluation committee reports.
+    You are a 'Headline Strategist', an expert AI assistant for public institution report writers in South Korea. Your goal is to generate fresh, persuasive, and clear headlines for management performance evaluation reports.
     
     The user will provide the following key pieces of information:
     1. National Objective (국정 목표), Strategic Initiative (추진전략), National Task (국정과제)
