@@ -14,7 +14,10 @@ const Header = ({ onOpenSettings }: HeaderProps) => {
                   <path fillRule="evenodd" d="M14.85 3.56L15.85 4.56L16.27 4.14C16.66 3.75 17.3 3.75 17.69 4.14L18.86 5.31C19.25 5.7 19.25 6.34 18.86 6.73L18.44 7.15L19.44 8.15L20.44 7.15C21.22 6.37 21.22 5.1 20.44 4.32L18.68 2.56C17.9 1.78 16.63 1.78 15.85 2.56L14.85 3.56Z" clipRule="evenodd" />
                </svg>
             </div>
-            <h1 className="text-2xl font-bold text-white">경평실적보고서 제목생성기</h1>
+            <div>
+              <h1 className="text-2xl font-bold text-white">경평 실적보고서 아이템 제목&amp;초안 생성기</h1>
+              <p className="text-lime-500 text-sm mt-1">경평 보고서 쓰시는 분들에게 도움이 되길 바라며 - Made by 박정범</p>
+            </div>
           </div>
           <div className="flex items-center">
             <button

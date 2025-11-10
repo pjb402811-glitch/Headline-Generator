@@ -18,6 +18,11 @@ export interface UserInput {
   customerPerformance: string;
 
   sampleReportText?: string;
+  sampleFile?: {
+    name: string;
+    mimeType: string;
+    data: string; // base64 encoded data
+  };
 }
 
 export interface Headline {
