@@ -7,8 +7,17 @@ export interface UserInput {
   evaluationDetailIndicator: string;
   coreActivity: string;
   innovativeMeans: string;
+  existingProblems: string; 
+  goals: string; 
+  processCharacteristics: string; 
+  
+  internalCustomer: string;
+  externalCustomer: string;
+  
   organizationalPerformance: string;
-  beneficiaryPerformance: string;
+  customerPerformance: string;
+
+  sampleReportText?: string;
 }
 
 export interface Headline {
@@ -21,4 +30,4 @@ export interface HeadlineResult {
   headlines: Headline[];
 }
 
-export type AppView = 'intro' | 'loading' | 'results' | 'error';
+export type AppView = 'intro' | 'loading' | 'results' | 'error' | 'drafting' | 'draft';
