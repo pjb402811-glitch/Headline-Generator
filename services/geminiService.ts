@@ -76,8 +76,11 @@ export const generateHeadlines = async (
       },
     });
 
-    const jsonText = response.text.trim();
-    return JSON.parse(jsonText) as HeadlineResult[];
+    const jsonText = response.text;
+    if (!jsonText) {
+        throw new Error("AI가 유효한 JSON 응답을 생성하지 못했습니다.");
+    }
+    return JSON.parse(jsonText.trim()) as HeadlineResult[];
   } catch (error) {
     console.error("Error generating headlines:", error);
     if (error instanceof Error) {
@@ -162,7 +165,7 @@ export const writeDraft = async (
       },
     });
 
-    return response.text;
+    return response.text ?? '';
   } catch (error) {
     console.error("Error writing draft:", error);
     if (error instanceof Error) {
@@ -225,8 +228,11 @@ export const regenerateMoreHeadlines = async (
       },
     });
 
-    const jsonText = response.text.trim();
-    return JSON.parse(jsonText) as HeadlineResult[];
+    const jsonText = response.text;
+    if (!jsonText) {
+      throw new Error("AI가 유효한 JSON 응답을 생성하지 못했습니다.");
+    }
+    return JSON.parse(jsonText.trim()) as HeadlineResult[];
   } catch (error) {
     console.error("Error regenerating more headlines:", error);
     if (error instanceof Error) {
@@ -317,7 +323,7 @@ export const regenerateDraft = async (
       },
     });
 
-    return response.text;
+    return response.text ?? '';
   } catch (error) {
     console.error("Error regenerating draft:", error);
     if (error instanceof Error) {
