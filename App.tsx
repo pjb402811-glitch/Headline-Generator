@@ -314,10 +314,10 @@ const DraftDisplay = ({ draft, onBack, onReset, feedbackText, onFeedbackChange, 
   onRegenerateDraft: () => void;
   isRegeneratingDraft: boolean;
   error: string | null;
-  draftStyles: { id: string; name: string }[];
-  currentDraftType: string;
-  onChangeStyle: (style: string) => void;
-  isChangingStyle: string | null;
+  draftStyles: { id: DraftStyle; name: string }[];
+  currentDraftType: DraftStyle;
+  onChangeStyle: (style: DraftStyle) => void;
+  isChangingStyle: DraftStyle | null;
 }) => {
   const formatDraft = (text: string) => {
     if (!text) return '';
@@ -441,9 +441,9 @@ function App() {
   const [feedbackText, setFeedbackText] = useState('');
   const [isRegeneratingDraft, setIsRegeneratingDraft] = useState(false);
 
-  const [drafts, setDrafts] = useState<Record<string, string>>({});
-  const [currentDraftType, setCurrentDraftType] = useState<string>('개조식 요약형');
-  const [isChangingStyle, setIsChangingStyle] = useState<string | null>(null);
+  const [drafts, setDrafts] = useState<Partial<Record<DraftStyle, string>>>({});
+  const [currentDraftType, setCurrentDraftType] = useState<DraftStyle>('개조식 요약형');
+  const [isChangingStyle, setIsChangingStyle] = useState<DraftStyle | null>(null);
   
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -614,7 +614,7 @@ function App() {
 
     if (drafts[styleId]) {
       setCurrentDraftType(styleId);
-      setDraftContent(drafts[styleId]);
+      setDraftContent(drafts[styleId] as string);
       return;
     }
 
@@ -634,7 +634,7 @@ function App() {
     } catch (e: any) {
       setError(e.message || '초안 스타일 변경 중 오류가 발생했습니다.');
       setCurrentDraftType('개조식 요약형');
-      setDraftContent(drafts['개조식 요약형']);
+      setDraftContent(drafts['개조식 요약형'] || '');
     } finally {
       setIsChangingStyle(null);
     }

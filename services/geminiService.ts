@@ -176,8 +176,6 @@ export const writeDraft = async (
 };
 
 const regenerateDraftPrompt = (
-  userInput: UserInput,
-  selectedHeadline: Headline,
   previousDraft: string,
   feedback: string
 ): string => `
@@ -212,8 +210,6 @@ export const regenerateDraft = async (
 ): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
   const prompt = regenerateDraftPrompt(
-    userInput,
-    selectedHeadline,
     previousDraft,
     feedback
   );
