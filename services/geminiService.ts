@@ -60,9 +60,10 @@ const resultSchema = {
 };
 
 export const generateHeadlines = async (
-  userInput: UserInput
+  userInput: UserInput,
+  apiKey: string
 ): Promise<HeadlineResult[]> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+  const ai = new GoogleGenAI({ apiKey });
   const prompt = generateHeadlinesPrompt(userInput);
 
   try {
@@ -136,9 +137,10 @@ ${sampleReportContext}
 
 export const writeDraft = async (
   userInput: UserInput,
-  selectedHeadline: Headline
+  selectedHeadline: Headline,
+  apiKey: string
 ): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+  const ai = new GoogleGenAI({ apiKey });
   const prompt = writeDraftPrompt(userInput, selectedHeadline);
 
   const parts: Part[] = [{ text: prompt }];
@@ -204,9 +206,10 @@ ${previousDraft}
 
 export const regenerateDraft = async (
   previousDraft: string,
-  feedback: string
+  feedback: string,
+  apiKey: string
 ): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+  const ai = new GoogleGenAI({ apiKey });
   const prompt = regenerateDraftPrompt(
     previousDraft,
     feedback
@@ -287,9 +290,10 @@ const singleHeadlineResultSchema = {
 
 export const regenerateMoreHeadlines = async (
   userInput: UserInput,
-  existingResults: HeadlineResult[]
+  existingResults: HeadlineResult[],
+  apiKey: string
 ): Promise<HeadlineResult[]> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+  const ai = new GoogleGenAI({ apiKey });
   const prompt = regenerateMoreHeadlinesPrompt(userInput, existingResults);
 
   try {
@@ -368,11 +372,12 @@ ${styleDescription}
 
 export const changeDraftStyle = async (
   originalDraft: string,
-  styleId: DraftStyle
+  styleId: DraftStyle,
+  apiKey: string
 ): Promise<string> => {
   if (styleId === '개조식 요약형') return originalDraft;
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+  const ai = new GoogleGenAI({ apiKey });
   const prompt = changeDraftStylePrompt(originalDraft, styleId);
 
   try {

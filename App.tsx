@@ -398,7 +398,7 @@ const DraftDisplay = ({ draft, onBack, onReset, feedbackText, onFeedbackChange, 
             >
               {isRegeneratingDraft ? (
                   <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -458,7 +458,7 @@ function App() {
   }, []);
 
   const getApiKey = useCallback(() => {
-      return process.env.API_KEY || localStorage.getItem('googleApiKey');
+      return localStorage.getItem('googleApiKey');
   }, []);
 
   const handleOpenSettings = () => {
@@ -467,7 +467,6 @@ function App() {
   
   const handleSaveApiKey = (key: string) => {
       localStorage.setItem('googleApiKey', key);
-      (process.env as any).API_KEY = key; 
       setApiKeyModalOpen(false);
   };
 
@@ -476,18 +475,17 @@ function App() {
     setView('loading');
     setError(null);
 
-    if (!getApiKey()) {
+    const apiKey = getApiKey();
+    if (!apiKey) {
         setError("API 키가 설정되지 않았습니다. 우측 상단 설정 아이콘을 클릭하여 API 키를 입력해주세요.");
         setIsLoading(false);
         setView('intro');
         setApiKeyModalOpen(true);
         return;
     }
-    (process.env as any).API_KEY = getApiKey() as string;
-
 
     try {
-      const headlineResults = await generateHeadlines(currentInput);
+      const headlineResults = await generateHeadlines(currentInput, apiKey);
       setResults(headlineResults);
       setView('results');
     } catch (e: any) {
@@ -508,16 +506,16 @@ function App() {
     setIsRegenerating(true);
     setError(null);
 
-    if (!getApiKey()) {
+    const apiKey = getApiKey();
+    if (!apiKey) {
         setError("API 키가 설정되지 않았습니다. 우측 상단 설정 아이콘을 클릭하여 API 키를 입력해주세요.");
         setIsRegenerating(false);
         setApiKeyModalOpen(true);
         return;
     }
-    (process.env as any).API_KEY = getApiKey() as string;
 
     try {
-      const newHeadlineResults = await regenerateMoreHeadlines(userInput, results);
+      const newHeadlineResults = await regenerateMoreHeadlines(userInput, results, apiKey);
       
       const mergedResults = results.map(existingResult => {
         const newResultForType = newHeadlineResults.find(
@@ -564,10 +562,17 @@ function App() {
     setView('drafting');
     setError(null);
     
-    (process.env as any).API_KEY = getApiKey() as string;
+    const apiKey = getApiKey();
+    if (!apiKey) {
+        setError("API 키가 설정되지 않았습니다. 우측 상단 설정 아이콘을 클릭하여 API 키를 입력해주세요.");
+        setIsDrafting(false);
+        setView('results');
+        setApiKeyModalOpen(true);
+        return;
+    }
     
     try {
-      const draft = await writeDraft(userInput, selectedHeadline);
+      const draft = await writeDraft(userInput, selectedHeadline, apiKey);
       setDrafts({ '개조식 요약형': draft });
       setCurrentDraftType('개조식 요약형');
       setDraftContent(draft);
@@ -595,10 +600,16 @@ function App() {
     setIsRegeneratingDraft(true);
     setError(null);
     
-    (process.env as any).API_KEY = getApiKey() as string;
+    const apiKey = getApiKey();
+     if (!apiKey) {
+        setError("API 키가 설정되지 않았습니다. 우측 상단 설정 아이콘을 클릭하여 API 키를 입력해주세요.");
+        setIsRegeneratingDraft(false);
+        setApiKeyModalOpen(true);
+        return;
+    }
   
     try {
-      const newDraft = await regenerateDraft(draftContent, feedbackText);
+      const newDraft = await regenerateDraft(draftContent, feedbackText, apiKey);
       setDrafts(prev => ({ ...prev, [currentDraftType]: newDraft }));
       setDraftContent(newDraft);
       setFeedbackText(''); 
@@ -622,13 +633,21 @@ function App() {
     setError(null);
     setCurrentDraftType(styleId);
     
-    (process.env as any).API_KEY = getApiKey() as string;
+    const apiKey = getApiKey();
+    if (!apiKey) {
+        setError("API 키가 설정되지 않았습니다. 우측 상단 설정 아이콘을 클릭하여 API 키를 입력해주세요.");
+        setIsChangingStyle(null);
+        setCurrentDraftType('개조식 요약형');
+        setDraftContent(drafts['개조식 요약형'] || '');
+        setApiKeyModalOpen(true);
+        return;
+    }
     
     try {
       const originalDraft = drafts['개조식 요약형'];
       if (!originalDraft) throw new Error("원본 초안을 찾을 수 없습니다.");
       
-      const newDraft = await changeDraftStyle(originalDraft, styleId);
+      const newDraft = await changeDraftStyle(originalDraft, styleId, apiKey);
       setDrafts(prev => ({ ...prev, [styleId]: newDraft }));
       setDraftContent(newDraft);
     } catch (e: any) {
