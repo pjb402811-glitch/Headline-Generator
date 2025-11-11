@@ -203,8 +203,6 @@ ${previousDraft}
 `;
 
 export const regenerateDraft = async (
-  userInput: UserInput,
-  selectedHeadline: Headline,
   previousDraft: string,
   feedback: string
 ): Promise<string> => {
