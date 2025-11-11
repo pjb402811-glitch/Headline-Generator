@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, ChangeEvent, FormEvent, useEffect, Fragment } from 'react';
-import type { UserInput, HeadlineResult, AppView, Headline } from './types';
+import type { UserInput, HeadlineResult, AppView, Headline, DraftStyle } from './types';
 import {
   NATIONAL_OBJECTIVES,
   STRATEGIC_INITIATIVES,
@@ -7,8 +7,9 @@ import {
   EVALUATION_CATEGORIES,
   EVALUATION_INDICATORS_BY_CATEGORY,
   DETAILED_INDICATORS_BY_INDICATOR,
+  DRAFT_STYLES,
 } from './constants';
-import { generateHeadlines, writeDraft, regenerateDraft, regenerateMoreHeadlines } from './services/geminiService';
+import { generateHeadlines, writeDraft, regenerateDraft, regenerateMoreHeadlines, changeDraftStyle } from './services/geminiService';
 import Header from './components/Header';
 import LoadingSpinner from './components/LoadingSpinner';
 import ResultsDisplay from './components/ResultsDisplay';
@@ -302,7 +303,9 @@ const IntroForm = ({ onSubmit, isLoading }: { onSubmit: (data: UserInput) => voi
   );
 };
 
-const DraftDisplay = ({ draft, onBack, onReset, feedbackText, onFeedbackChange, onRegenerateDraft, isRegeneratingDraft, error }: {
+const DraftDisplay = ({ draft, onBack, onReset, feedbackText, onFeedbackChange, onRegenerateDraft, isRegeneratingDraft, error,
+  draftStyles, currentDraftType, onChangeStyle, isChangingStyle
+}: {
   draft: string;
   onBack: () => void;
   onReset: () => void;
@@ -311,17 +314,55 @@ const DraftDisplay = ({ draft, onBack, onReset, feedbackText, onFeedbackChange, 
   onRegenerateDraft: () => void;
   isRegeneratingDraft: boolean;
   error: string | null;
+  draftStyles: { id: string; name: string }[];
+  currentDraftType: string;
+  onChangeStyle: (style: string) => void;
+  isChangingStyle: string | null;
 }) => {
+  const formatDraft = (text: string) => {
+    if (!text) return '';
+    return text.split('\n').map(line => {
+      if (line.startsWith('【') && line.endsWith('】')) {
+        return `<h2 class="!text-3xl !font-bold !text-white !mb-2">${line}</h2>`;
+      }
+      if (line.startsWith('<') && line.endsWith('>')) {
+        return `<h3 class="!text-xl !text-blue-300 !mb-6">${line}</h3>`;
+      }
+      return line;
+    }).join('<br/>');
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="text-center mb-8">
-         <h2 className="text-3xl font-bold text-white">보고서 초안</h2>
-         <p className="mt-2 text-lg text-gray-400">AI가 생성한 보고서 초안입니다. 아래에 의견을 제시하여 초안을 수정하거나, 내용을 복사하여 활용할 수 있습니다.</p>
+         <h2 className="text-3xl font-bold text-white">AI 생성 보고서 초안</h2>
+         <div className="mt-4 inline-flex rounded-md shadow-sm" role="group">
+            {draftStyles.map(style => (
+              <button
+                key={style.id}
+                type="button"
+                onClick={() => onChangeStyle(style.id)}
+                disabled={!!isChangingStyle}
+                className={`px-4 py-2 text-sm font-medium border transition-colors duration-200 ${
+                  currentDraftType === style.id 
+                    ? 'bg-blue-600 text-white border-blue-700 z-10' 
+                    : 'bg-gray-700 text-gray-300 border-gray-600 hover:bg-gray-600'
+                } ${
+                  isChangingStyle === style.id ? 'opacity-50 cursor-wait' : ''
+                } first:rounded-l-lg last:rounded-r-lg disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                {isChangingStyle === style.id ? '변환 중...' : style.name}
+              </button>
+            ))}
+         </div>
       </div>
 
       <div className="bg-gray-800 p-8 rounded-lg border border-gray-700 shadow-lg relative prose prose-invert max-w-none prose-p:text-gray-300 prose-headings:text-white prose-strong:text-blue-400 prose-ul:list-disc prose-li:marker:text-blue-500">
-        <div dangerouslySetInnerHTML={{ __html: draft.replace(/\n/g, '<br/>') }}>
-        </div>
+        {isChangingStyle && !draft ? (
+            <LoadingSpinner message="새로운 스타일로 초안을 재작성하고 있습니다..." />
+        ) : (
+           <div dangerouslySetInnerHTML={{ __html: formatDraft(draft) }}></div>
+        )}
         <div className="absolute top-4 right-4">
             <CopyButton textToCopy={draft} />
         </div>
@@ -399,6 +440,10 @@ function App() {
   const [isApiKeyModalOpen, setApiKeyModalOpen] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
   const [isRegeneratingDraft, setIsRegeneratingDraft] = useState(false);
+
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [currentDraftType, setCurrentDraftType] = useState<string>('개조식 요약형');
+  const [isChangingStyle, setIsChangingStyle] = useState<string | null>(null);
   
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -479,7 +524,6 @@ function App() {
           newResult => newResult.type === existingResult.type
         );
         if (newResultForType) {
-          // Make sure not to add duplicates, though the prompt should prevent it.
           const existingTitles = new Set(existingResult.headlines.map(h => h.title));
           const uniqueNewHeadlines = newResultForType.headlines.filter(h => !existingTitles.has(h.title));
           
@@ -506,6 +550,9 @@ function App() {
     setView('intro');
     setSelectedHeadline(null);
     setDraftContent('');
+    setDrafts({});
+    setCurrentDraftType('개조식 요약형');
+    setIsChangingStyle(null);
   };
   
   const handleWriteDraft = async () => {
@@ -521,6 +568,8 @@ function App() {
     
     try {
       const draft = await writeDraft(userInput, selectedHeadline);
+      setDrafts({ '개조식 요약형': draft });
+      setCurrentDraftType('개조식 요약형');
       setDraftContent(draft);
       setView('draft');
     } catch (e: any) {
@@ -550,6 +599,7 @@ function App() {
   
     try {
       const newDraft = await regenerateDraft(userInput, selectedHeadline, draftContent, feedbackText);
+      setDrafts(prev => ({ ...prev, [currentDraftType]: newDraft }));
       setDraftContent(newDraft);
       setFeedbackText(''); 
     } catch (e: any) {
@@ -558,6 +608,38 @@ function App() {
       setIsRegeneratingDraft(false);
     }
   };
+
+  const handleChangeDraftStyle = async (styleId: DraftStyle) => {
+    if (styleId === currentDraftType) return;
+
+    if (drafts[styleId]) {
+      setCurrentDraftType(styleId);
+      setDraftContent(drafts[styleId]);
+      return;
+    }
+
+    setIsChangingStyle(styleId);
+    setError(null);
+    setCurrentDraftType(styleId);
+    
+    (process.env as any).API_KEY = getApiKey() as string;
+    
+    try {
+      const originalDraft = drafts['개조식 요약형'];
+      if (!originalDraft) throw new Error("원본 초안을 찾을 수 없습니다.");
+      
+      const newDraft = await changeDraftStyle(originalDraft, styleId);
+      setDrafts(prev => ({ ...prev, [styleId]: newDraft }));
+      setDraftContent(newDraft);
+    } catch (e: any) {
+      setError(e.message || '초안 스타일 변경 중 오류가 발생했습니다.');
+      setCurrentDraftType('개조식 요약형');
+      setDraftContent(drafts['개조식 요약형']);
+    } finally {
+      setIsChangingStyle(null);
+    }
+  };
+
 
   const renderContent = () => {
     switch (view) {
@@ -584,7 +666,7 @@ function App() {
         );
       case 'draft':
         return <DraftDisplay 
-                  draft={draftContent} 
+                  draft={drafts[currentDraftType] ?? ''} 
                   onBack={() => setView('results')} 
                   onReset={handleReset}
                   feedbackText={feedbackText}
@@ -592,6 +674,10 @@ function App() {
                   onRegenerateDraft={handleRegenerateDraft}
                   isRegeneratingDraft={isRegeneratingDraft}
                   error={error}
+                  draftStyles={DRAFT_STYLES}
+                  currentDraftType={currentDraftType}
+                  onChangeStyle={handleChangeDraftStyle}
+                  isChangingStyle={isChangingStyle}
                 />;
       case 'error':
         return (

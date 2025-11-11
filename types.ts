@@ -36,3 +36,5 @@ export interface HeadlineResult {
 }
 
 export type AppView = 'intro' | 'loading' | 'results' | 'error' | 'drafting' | 'draft';
+
+export type DraftStyle = '개조식 요약형' | '스토리텔링형' | '성과 강조형';
