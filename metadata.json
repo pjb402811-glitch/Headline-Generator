@@ -1,5 +1,25 @@
 {
   "name": "경평 실적보고서 아이템 제목&초안 생성기",
+  "short_name": "경평 아이템 생성기",
   "description": "사용자가 입력한 핵심 성과 데이터를 기반으로, 공공기관 경영평가 실적보고서에 사용할 아이템 제목과 논리적인 초안을 생성하는 AI 기반 애플리케이션입니다.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#111827",
+  "background_color": "#111827",
+  "icons": [
+    {
+      "src": "/icon-192x192.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
   "requestFramePermissions": []
 }
